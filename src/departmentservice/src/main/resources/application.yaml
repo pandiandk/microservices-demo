@@ -16,3 +16,15 @@ feign:
 
 springdoc:
   show-actuator: true
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  metrics:
+    enable:
+      all: true
+    tags:
+      application: departmentservice
