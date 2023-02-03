@@ -1,7 +1,5 @@
 package com.example.employeeservice.controller;
 
-import java.util.List;
-
 import com.example.employeeservice.model.Employee;
 import com.example.employeeservice.repository.EmployeeRepository;
 import org.slf4j.Logger;
@@ -12,6 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+import static net.logstash.logback.argument.StructuredArguments.keyValue;
 
 @RestController
 public class EmployeeController {
@@ -29,7 +31,7 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public Employee findById(@PathVariable("id") String id) {
-        LOGGER.info("Employee find: id={}", id);
+        LOGGER.info("Employee find: {}", keyValue("id", id), keyValue("path", "/{id}"));
         return repository.findById(id).get();
     }
 
