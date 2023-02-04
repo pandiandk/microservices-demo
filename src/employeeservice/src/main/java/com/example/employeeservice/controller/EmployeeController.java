@@ -32,6 +32,7 @@ public class EmployeeController {
     public EmployeeController(EmployeeRepository repository, MeterRegistry meterRegistry) {
         this.repository = repository;
         this.meterRegistry = meterRegistry;
+        init();
     }
 
 
