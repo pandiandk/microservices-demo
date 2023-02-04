@@ -44,6 +44,10 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: "http://jaeger.kube-tracing.svc.cluster.local:4317"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "service.name=employeeservice,service.version=1.0.0"
             - name: PORT
               value: "8080"
             - name: MONGO_HOSTNAME
@@ -63,6 +67,7 @@ spec:
                 secretKeyRef:
                   name: mongodb
                   key: database-password
+
 ---
 apiVersion: v1
 kind: Service
