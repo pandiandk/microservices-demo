@@ -2,9 +2,10 @@ package com.example.employeeservice.controller;
 
 import com.example.employeeservice.model.Employee;
 import com.example.employeeservice.repository.EmployeeRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +21,19 @@ public class EmployeeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeController.class);
 
-    @Autowired
-    EmployeeRepository repository;
+
+    private final EmployeeRepository repository;
+
+    private Counter emplCounter;
+
+
+    private final MeterRegistry meterRegistry;
+
+    public EmployeeController(EmployeeRepository repository, MeterRegistry meterRegistry) {
+        this.repository = repository;
+        this.meterRegistry = meterRegistry;
+    }
+
 
     @PostMapping("/")
     public Employee add(@RequestBody Employee employee) {
@@ -38,6 +50,7 @@ public class EmployeeController {
     @GetMapping("/")
     public Iterable<Employee> findAll() {
         LOGGER.info("Employee find");
+        this.emplCounter.increment();
         return repository.findAll();
     }
 
@@ -51,6 +64,13 @@ public class EmployeeController {
     public List<Employee> findByOrganization(@PathVariable("organizationId") String organizationId) {
         LOGGER.info("Employee find: organizationId={}", organizationId);
         return repository.findByOrganizationId(organizationId);
+    }
+
+    private void init() {
+        this.emplCounter = Counter.builder("employee.get.counter")
+                .tag("employee_api", "findAll")
+                .description("return the count of findAll endpoint")
+                .register(meterRegistry);
     }
 
 }
